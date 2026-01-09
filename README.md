@@ -1,4 +1,4 @@
-# JLI-myRAnalysis
+# Retail-Transaction-Analytics-using-R
 ## Dataset
 My R program uses the following dataset:
 ```bash
