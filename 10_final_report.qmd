@@ -2,8 +2,6 @@
 
 ---
 
-**生成时间：** 2026年9月14日
-
 **项目介绍：**
 基于 R 的 SHEIN 电商商品、客户及订单数据分析项目，覆盖商品 EDA、销售趋势分析、客户 RFM/K-means 聚类以及时间序列销售预测。
 
@@ -57,25 +55,25 @@
 
 ### 1.3 全部商品的价格分布
 
-![图片说明](..\output-final-data-visual\eda_stage0\02_price_distribution_bar.png)
+![图片说明](output-final-data-visual\eda_stage0\02_price_distribution_bar.png)
 
 ### 1.4 全部商品的折扣率分布
 
-![图片说明](..\output-final-data-visual\eda_stage1\05_discount_hist.png)
+![图片说明](output-final-data-visual\eda_stage1\05_discount_hist.png)
 
 ## 2. 销售数据表现
 
 ### 2.1 每月月销售数量表现
 
-![图片说明](..\output-final-data-visual\eda_stage1\02_viz_monthly_qty.png)
+![图片说明](output-final-data-visual\eda_stage1\02_viz_monthly_qty.png)
 
 ### 2.2 每月月销售金额表现
 
-![图片说明](..\output-final-data-visual\eda_stage1\03_viz_monthly_amount.png)
+![图片说明](output-final-data-visual\eda_stage1\03_viz_monthly_amount.png)
 
 ### 2.3 全部时间段的订单的状态分布
 
-![图片说明](..\output-final-data-visual\eda_stage2\15_order_status_distribution.png)
+![图片说明](output-final-data-visual\eda_stage2\15_order_status_distribution.png)
 
 ### 2.4 Top5商品类别销量分布
 
@@ -87,27 +85,27 @@
 | Bags & Luggage           | 55349     | 1134001.26  | 26.587120026092627 | 0.8398703323866682 |
 | Jewelry & Watches        | 50720     | 322850.99   | 7.160246212121212  | 0.8580315948638338 |
 
-![图片说明](..\output-final-data-visual\eda_stage0\03_top5_category_sales.png)
+![图片说明](output-final-data-visual\eda_stage0\03_top5_category_sales.png)
 
 ### 2.5 Top20商品颜色的销量分布
 
-![图片说明](..\output-final-data-visual\eda_stage0\04_color_preference_top20.png)
+![图片说明](output-final-data-visual\eda_stage0\04_color_preference_top20.png)
 
 ### 2.6 Top20商品尺码的销量分布
 
-![图片说明](..\output-final-data-visual\eda_stage0\05_size_distribution_top20.png)
+![图片说明](output-final-data-visual\eda_stage0\05_size_distribution_top20.png)
 
 ### 2.7 Top10商品品牌的销量分布
 
-![图片说明](..\output-final-data-visual\eda_stage0\06_brand_top10.png)
+![图片说明](output-final-data-visual\eda_stage0\06_brand_top10.png)
 
 ### 2.8 不同销售渠道和地区的商品销售额对比
 
-![图片说明](..\output-final-data-visual\eda_stage2\09_channel_region_sales.png)
+![图片说明](output-final-data-visual\eda_stage2\09_channel_region_sales.png)
 
 ### 2.9 不同在售状态和商品类别的关系
 
-![图片说明](..\output-final-data-visual\eda_stage2\12_in_stock_by_category.png)
+![图片说明](output-final-data-visual\eda_stage2\12_in_stock_by_category.png)
 
 ## 3. 客户聚类表现
 
@@ -143,37 +141,37 @@ Cluster 3：高价值 / 高客单客户（人数最少）
 recency 中等（约 380 天）
 品类中等（约 11.3）
 
-![图片说明](..\output-final-data-visual\eda_stage2\17_pca_customers_pc1_pc2.png)
+![图片说明](output-final-data-visual\eda_stage2\17_pca_customers_pc1_pc2.png)
 
-![图片说明](..\output-final-data-visual\eda_stage2\02_cluster_count_bar.png)
+![图片说明](output-final-data-visual\eda_stage2\02_cluster_count_bar.png)
 
 ### 3.2 不同客户cluster的总消费金额（美元）和订单数的表现
 
-![图片说明](..\output-final-data-visual\eda_stage2\01_cluster_monetary_ordercount_box.png)
+![图片说明](output-final-data-visual\eda_stage2\01_cluster_monetary_ordercount_box.png)
 
 ### 3.3 不同客户cluster的RFM表现
 
-![图片说明](..\output-final-data-visual\eda_stage2\03_rfm_box_by_type.png)
+![图片说明](output-final-data-visual\eda_stage2\03_rfm_box_by_type.png)
 
 ### 3.4 不同客户cluster的AOV和订单数的对比
 
-![图片说明](..\output-final-data-visual\eda_stage2\04_avg_order_value_vs_order_count.png)
+![图片说明](output-final-data-visual\eda_stage2\04_avg_order_value_vs_order_count.png)
 
 ### 3.5 不同客户cluster的每日销售额的对比
 
-![图片说明](..\output-final-data-visual\eda_stage2\05_time_series_sales_by_type.png)
+![图片说明](output-final-data-visual\eda_stage2\05_time_series_sales_by_type.png)
 
 ### 3.6 不同客户cluster的90日存留率对比
 
-![图片说明](..\output-final-data-visual\eda_stage2\07_cohort_retention_90days_by_year.png)
+![图片说明](output-final-data-visual\eda_stage2\07_cohort_retention_90days_by_year.png)
 
 ### 3.7 Kmeans聚类: K选择K=3的silhouette图
 
-![图片说明](..\data\processed-v2\06-product_silhouette_k_selection_plot-k=3.png)
+![图片说明](data\processed-v2\06-product_silhouette_k_selection_plot-k=3.png)
 
 ### 3.8 Kmeans聚类: K选择K=3的elbow图
 
-![图片说明](..\data\processed-v2\06-product_wss_elbow_plot-k=3.png)
+![图片说明](data\processed-v2\06-product_wss_elbow_plot-k=3.png)
 
 ## 4. 销售预测的表现
 
@@ -198,11 +196,11 @@ recency 中等（约 380 天）
 
 预测结果的最佳模型是TSLM
 
-<!-- ![图片说明](..\output-final-data-visual\eda_stage3\01_fig_monthly_sales_ts.png) -->
+<!-- ![图片说明](output-final-data-visual\eda_stage3\01_fig_monthly_sales_ts.png) -->
 
-![图片说明](..\data\processed-v2\07_monthly_sales_amount_forecast.png)
+![图片说明](data\processed-v2\07_monthly_sales_amount_forecast.png)
 
-![图片说明](..\data\processed-v2\07_monthly_sales_amount_all_models_forecast.png)
+![图片说明](data\processed-v2\07_monthly_sales_amount_all_models_forecast.png)
 
 ### 4.2 预测的销售数量和实际值对比
 
@@ -225,27 +223,27 @@ recency 中等（约 380 天）
 
 预测结果的最佳模型是TSLM
 
-<!-- ![图片说明](..\output-final-data-visual\eda_stage3\01_fig_monthly_ts_qty.png) -->
+<!-- ![图片说明](output-final-data-visual\eda_stage3\01_fig_monthly_ts_qty.png) -->
 
-![图片说明](..\data\processed-v2\08_monthly_best_sales_qty_forecast.png)
+![图片说明](data\processed-v2\08_monthly_best_sales_qty_forecast.png)
 
-![图片说明](..\data\processed-v2\08_monthly_sales_qty_all_models_forecast.png)
+![图片说明](data\processed-v2\08_monthly_sales_qty_all_models_forecast.png)
 
 ### 4.3 预测的销售金额的STL分解
 
-![图片说明](..\output-final-data-visual\eda_stage3\02_fig_stl_decomposition.png)
+![图片说明](output-final-data-visual\eda_stage3\02_fig_stl_decomposition.png)
 
 ### 4.4 预测的销售数量的STL分解
 
-![图片说明](..\output-final-data-visual\eda_stage3\02_fig_stl_decomposition_qty.png)
+![图片说明](output-final-data-visual\eda_stage3\02_fig_stl_decomposition_qty.png)
 
 ### 4.5 预测的销售金额的时序图、ACF和PACF情况
 
-![图片说明](..\output-final-data-visual\eda_stage3\03_fig_acf_pacf.png)
+![图片说明](output-final-data-visual\eda_stage3\03_fig_acf_pacf.png)
 
 ### 4.6 预测的销售数量的时序图、ACF和PACF情况
 
-![图片说明](..\output-final-data-visual\eda_stage3\03_fig_acf_pacf_qty.png)
+![图片说明](output-final-data-visual\eda_stage3\03_fig_acf_pacf_qty.png)
 
 
 ## 5. 综合洞察与建议
