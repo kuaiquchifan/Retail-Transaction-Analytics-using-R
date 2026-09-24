@@ -9,7 +9,7 @@ library(readr)
 
 # 1. 读取合并数据与聚类结果（根据你的保存路径调整）
 data_path <- "data/processed-v2/04-combined_order_product_customer.parquet"
-cluster_features_path <- "data/processed-v2/05-customer_features-k=3.parquet"  # 示例路径
+cluster_features_path <- "data/processed-v2/05-customer_features-k=3.parquet"
 cluster_results_path <- "data/processed-v2/05-customer_cluster_result-k=3.parquet"
 
 
