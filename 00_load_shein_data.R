@@ -2,7 +2,7 @@ library(tidyverse)
 
 # 加载数据
 shein <- read_csv(
-  "./data/raw/shein.csv",
+  "/data/raw/shein.csv",
   locale = locale(encoding = "UTF-8"),
   na = c("", "NA", "null"),
   trim_ws = TRUE,
