@@ -291,5 +291,5 @@ source("09_data_visualization*.R")
 
 ## 作者与致谢
 
-Author: Junliang Li
+Author: Junliang Li   
 Email: 940747544@qq.com
