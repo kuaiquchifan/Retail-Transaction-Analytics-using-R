@@ -38,6 +38,7 @@ This project covers the full analysis pipeline for the original SHEIN e-commerce
 `07_sale_amount_predict_v3.R`: # Builds and compares monthly sales amount forecasting models to identify the best-performing model.
 `08_sale_qty_predict.R`: # Builds and compares monthly sales quantity forecasting models to identify the best-performing model.
 `09_data_visualization*.R` (multiple files): # Generates staged visualizations for distributions, time series, category comparisons, and customer or product behavior analysis.
+`data`: # the folder for raw data and basic aggregate data
 `output-final-data-visual/stage0/1/2/3`: # Represents different levels of complexity or analysis stages.
 `10_final_report.qmd`: # Final analysis report summary in Quarto format with key findings, clustering summaries, and recommendations.
 `11_final_report.md`: # Final analysis report summary in Markdown format with key findings, clustering summaries, and recommendations.
@@ -283,6 +284,5 @@ This project is an open-source project distributed under the **Apache 2.0** lice
 
 ## Author and Acknowledgements
 
-Author: Junliang Li   
+Author: Junliang Li
 Email: [940747544@qq.com](mailto:940747544@qq.com)
-
