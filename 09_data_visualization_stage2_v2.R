@@ -67,6 +67,7 @@ p1_ordercount_box <- ggplot(cust_agg %>% filter(!is.na(customer_type)),
   theme_minimal() +
   theme(legend.position = "none")
 
+# cluster的条形图
 p1_count_bar <- ggplot(cust_agg %>% count(customer_type, name = "n"),
                        aes(x = reorder(customer_type, -n), y = n, fill = customer_type)) +
   geom_col() +
@@ -78,6 +79,90 @@ ggsave(file.path(out_dir, "01_cluster_monetary_ordercount_box.png"),
        p1_monetary_box + p1_ordercount_box + plot_layout(ncol = 2),
        width = 14, height = 6, dpi = 300)
 ggsave(file.path(out_dir, "02_cluster_count_bar.png"), p1_count_bar, width = 8, height = 5, dpi = 300)
+
+
+# cluster 的饼图（直接读取聚类结果文件）
+cluster_summary <- read.csv(
+  file.path("data", "processed-v2", "05-customer_cluster_result-k=3.csv"),
+  stringsAsFactors = FALSE
+) %>%
+  mutate(cluster = as.integer(cluster),
+         customer_count = as.numeric(customer_count))
+
+# 从主数据 df 中找每个 cluster 的主流 customer_type（用作 cluster 名称）
+cluster_names_from_df <- df %>%
+  filter(!is.na(cluster) & !is.na(customer_type)) %>%
+  group_by(cluster, customer_type) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  group_by(cluster) %>%
+  slice_max(n, n = 1, with_ties = FALSE) %>%
+  ungroup() %>%
+  transmute(cluster = as.integer(cluster),
+            cluster_name = customer_type)
+
+# 合并名称，若缺失则退回到 "Cluster N"
+cluster_summary <- cluster_summary %>%
+  left_join(cluster_names_from_df, by = "cluster") %>%
+  mutate(
+    cluster_name = if_else(is.na(cluster_name),
+                          paste0("Cluster ", cluster),
+                          cluster_name),
+    pct = customer_count / sum(customer_count),
+    label = paste0(
+      cluster, "\n",
+      scales::comma(customer_count), " 人",
+      "\n", " (",
+      scales::percent(pct, accuracy = 0.1), ")"
+    )
+  ) %>%
+  arrange(desc(pct))
+
+p_cluster_pie <- ggplot(cluster_summary, aes(x = "", y = pct, fill = cluster_name)) +
+  geom_col(width = 1, color = "white") +
+  coord_polar(theta = "y") +
+  geom_text(aes(label = label), position = position_stack(vjust = 0.5), size = 3) +
+  labs(title = "各 Cluster 数量占比", fill = "cluster") +
+  theme_void() +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "right")
+
+ggsave(file.path(out_dir, "02_cluster_share_pie.png"), p_cluster_pie, width = 6, height = 6, dpi = 300)
+
+
+
+# —— 新增：按 cluster 的销售额占比饼图 —— 
+cluster_sales <- df %>%
+  filter(!is.na(cluster)) %>%
+  group_by(cluster) %>%
+  summarise(sales = sum(line_total, na.rm = TRUE), .groups = "drop") %>%
+  mutate(cluster = as.integer(cluster))
+
+cluster_sales <- cluster_sales %>%
+  left_join(cluster_summary %>% select(cluster, cluster_name), by = "cluster") %>%
+  mutate(
+    cluster_name = if_else(is.na(cluster_name),
+                          paste0("Cluster ", cluster),
+                          cluster_name),
+    pct_sales = sales / sum(sales),
+    label_sales = paste0(
+      cluster, "\n",
+      scales::dollar(sales), " (",
+      scales::percent(pct_sales, accuracy = 0.1), ")"
+    )
+  )
+
+p_cluster_sales_pie <- ggplot(cluster_sales, aes(x = "", y = pct_sales, fill = cluster_name)) +
+  geom_col(width = 1, color = "white") +
+  coord_polar(theta = "y") +
+  geom_text(aes(label = label_sales), position = position_stack(vjust = 0.5), size = 3) +
+  labs(title = "各 Cluster 销售额占比", fill = "cluster") +
+  theme_void() +
+  theme(plot.title = element_text(hjust = 0.5), legend.position = "right")
+
+ggsave(file.path(out_dir, "02_cluster_sales_share_pie.png"), p_cluster_sales_pie, width = 6, height = 6, dpi = 300)
+
+
+
 
 # 2) RFM 分布图：recency/frequency/monetary 的箱型图（按 customer_type）
 p_r <- ggplot(cust_agg %>% filter(!is.na(customer_type)),
@@ -123,13 +208,13 @@ ts_daily <- df %>%
     .groups = "drop"
   )
 
-p_ts_sales <- ggplot(ts_daily, aes(x = order_date, y = daily_sales, color = customer_type)) +
-  geom_line(size = 0.8, alpha = 0.9) +
+p_ts_sales <- ggplot(ts_daily, aes(x = order_date, y = daily_sales, color = customer_type, group = customer_type)) +
+  geom_line(linewidth = 0.8, alpha = 0.9) +
   labs(title = "每日销售额（按客户类型）", x = "日期", y = "销售额（美元）") +
   theme_minimal()
 
-p_ts_orders <- ggplot(ts_daily, aes(x = order_date, y = daily_orders, color = customer_type)) +
-  geom_line(size = 0.7, alpha = 0.9) +
+p_ts_orders <- ggplot(ts_daily, aes(x = order_date, y = daily_orders, color = customer_type, group = customer_type)) +
+  geom_line(linewidth = 0.7, alpha = 0.9) +
   labs(title = "每日订单数（按客户类型）", x = "日期", y = "订单数") +
   theme_minimal()
 
@@ -298,7 +383,7 @@ rating_sales <- df %>%
 p_rating_sales <- rating_sales %>%
   ggplot(aes(x = rating, y = sales, group = 1)) +
   geom_point(alpha = 0.5) +
-  geom_smooth(method = "lm", se = TRUE, aes(group = 1), color = "#FF6B6B") +
+  geom_smooth(method = "lm", se = TRUE, formula = y ~ x, aes(group = 1), color = "#FF6B6B") +
   scale_y_continuous(labels = comma) +
   labs(
     title = "Product rating 与 销售额的关系",
@@ -322,7 +407,7 @@ p_image_desc <- df2 %>%
             .groups = "drop") %>%
   ggplot(aes(x = image_count, y = sales, group = 1)) +
   geom_point(alpha = 0.5) +
-  geom_smooth(method = "lm", se = FALSE, color = "#2E86AB") +
+  geom_smooth(method = "lm", se = FALSE, formula = y ~ x, aes(group = 1), color = "#2E86AB") +
   labs(title = "image_count vs 产品销售额", x = "image_count", y = "销售额（美元）") +
   theme_minimal()
 
@@ -344,6 +429,230 @@ if ("order_status" %in% names(df)) {
 
   ggsave(file.path(out_dir, "15_order_status_distribution.png"), p_order_status, width = 10, height = 6, dpi = 300)
 }
+
+# 为所有商品类别建立固定颜色映射
+category_levels <- sort(unique(
+  na.omit(as.character(df$root_category))
+))
+
+category_colors <- setNames(
+  scales::hue_pal()(length(category_levels)),
+  category_levels
+)
+
+# Top 5 图表中合并的其他类别统一使用灰色
+category_colors <- category_colors[names(category_colors) != "Other"]
+category_colors <- c(category_colors, Other = "#9E9E9E")
+
+# 9.1) 按商品类别的销售额占比饼图
+top_n <- 5
+
+category_sales <- df %>%
+  filter(!is.na(root_category)) %>%
+  group_by(root_category) %>%
+  summarise(
+    sales = sum(line_total, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(sales)) %>%
+  mutate(
+    root_category = as.character(root_category),
+    is_top = row_number() <= top_n
+  )
+
+category_sales_plot <- category_sales %>%
+  mutate(
+    root_category = if_else(is_top, root_category, "Other")
+  ) %>%
+  group_by(root_category) %>%
+  summarise(
+    sales = sum(sales, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    pct_sales = sales / sum(sales),
+    label_sales = paste0(
+      root_category, "\n",
+      scales::dollar(sales), "\n",
+      "(", scales::percent(pct_sales, accuracy = 0.1), ")"
+    )
+  ) %>%
+  arrange(desc(sales))
+
+p_category_sales_pie <- ggplot(
+  category_sales_plot,
+  aes(x = "", y = pct_sales, fill = root_category)
+) +
+  geom_col(width = 1, color = "white") +
+  coord_polar(theta = "y") +
+  geom_text(
+    aes(label = label_sales),
+    position = position_stack(vjust = 0.5),
+    size = 2.7
+  ) +
+  scale_fill_manual(values = category_colors) +
+  labs(
+    title = "Top 5 商品类别销售额占比",
+    fill = "root_category"
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "right"
+  )
+
+ggsave(
+  file.path(out_dir, "12a_root_category_sales_share_pie.png"),
+  p_category_sales_pie,
+  width = 8,
+  height = 8,
+  dpi = 300
+)
+
+
+# 9.2) 按商品类别的销售数量占比饼图
+top_n <- 5
+
+category_qty <- df %>%
+  filter(!is.na(root_category)) %>%
+  group_by(root_category) %>%
+  summarise(
+    qty = sum(quantity, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(qty)) %>%
+  mutate(
+    root_category = as.character(root_category),
+    is_top = row_number() <= top_n
+  )
+
+category_qty_plot <- category_qty %>%
+  mutate(
+    root_category = if_else(is_top, root_category, "Other")
+  ) %>%
+  group_by(root_category) %>%
+  summarise(
+    qty = sum(qty, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    pct_qty = qty / sum(qty),
+    label_qty = paste0(
+      root_category, "\n",
+      scales::comma(qty), " 件\n",
+      "(", scales::percent(pct_qty, accuracy = 0.1), ")"
+    )
+  ) %>%
+  arrange(desc(qty))
+
+p_category_qty_pie <- ggplot(
+  category_qty_plot,
+  aes(x = 1, y = pct_qty, fill = root_category)
+) +
+  geom_col(width = 2, color = "white") +
+  coord_polar(theta = "y", clip = "off") +
+  geom_text(
+    aes(x = 1.6, label = label_qty),
+    position = position_stack(vjust = 0.5),
+    size = 2.8
+  ) +
+  scale_x_continuous(
+    limits = c(0, 2),
+    expand = c(0, 0)
+  ) +
+  scale_fill_manual(values = category_colors) +
+  labs(
+    title = "Top 5 商品类别销售数量占比",
+    fill = "root_category"
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "right",
+    plot.margin = margin(10, 20, 10, 20)
+  )
+
+ggsave(
+  file.path(out_dir, "12b_root_category_qty_share_pie.png"),
+  p_category_qty_pie,
+  width = 8,
+  height = 8,
+  dpi = 300
+)
+
+
+# 9.3) Top 5 热销商品类别中 product_id 数量占比
+top_n <- 5
+
+category_top5_productid <- df %>%
+  filter(!is.na(root_category), !is.na(product_id)) %>%
+  group_by(root_category) %>%
+  summarise(
+    sales = sum(line_total, na.rm = TRUE),
+    product_id_count = n_distinct(product_id),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(sales)) %>%
+  mutate(
+    root_category = as.character(root_category),
+    is_top = row_number() <= top_n
+  )
+
+category_top5_productid_plot <- category_top5_productid %>%
+  mutate(
+    root_category = if_else(is_top, root_category, "Other")
+  ) %>%
+  group_by(root_category) %>%
+  summarise(
+    sales = sum(sales, na.rm = TRUE),
+    product_id_count = sum(product_id_count, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    pct_productid = product_id_count / sum(product_id_count),
+    label_productid = paste0(
+      root_category, "\n",
+      scales::comma(product_id_count), " 个 product_id\n",
+      "(", scales::percent(pct_productid, accuracy = 0.1), ")"
+    )
+  ) %>%
+  arrange(desc(sales))
+
+p_category_productid_pie <- ggplot(
+  category_top5_productid_plot,
+  aes(x = 1, y = pct_productid, fill = root_category)
+) +
+  geom_col(width = 2, color = "white") +
+  coord_polar(theta = "y", clip = "off") +
+  geom_text(
+    aes(x = 1.6, label = label_productid),
+    position = position_stack(vjust = 0.5),
+    size = 2.8
+  ) +
+  scale_x_continuous(
+    limits = c(0, 2),
+    expand = c(0, 0)
+  ) +
+  scale_fill_manual(values = category_colors) +
+  labs(
+    title = "Top 5 热销商品类别中 product_id 数量占比",
+    fill = "root_category"
+  ) +
+  theme_void() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "right",
+    plot.margin = margin(10, 20, 10, 20)
+  )
+
+ggsave(
+  file.path(out_dir, "12c_top5_category_productid_share_pie.png"),
+  p_category_productid_pie,
+  width = 8,
+  height = 8,
+  dpi = 300
+)
+
 
 # 13) 地理热力（按 region 汇总销售额）
 if ("region" %in% names(df)) {
@@ -408,3 +717,47 @@ p_top_orders <- ggplot(top_orders, aes(x = reorder(order_id, order_total), y = o
 ggsave(file.path(out_dir, "18_top20_orders_bar.png"), p_top_orders, width = 12, height = 8, dpi = 300)
 
 cat("所有图表已生成并保存在：", out_dir, "\n")
+
+
+
+
+# 16) Top 10 热销产品销售额
+top10_products <- df %>%
+  filter(!is.na(product_id)) %>%
+  group_by(product_id) %>%
+  summarise(
+    sales = sum(line_total, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(sales)) %>%
+  slice_head(n = 10)
+
+p_top10_products <- ggplot(
+  top10_products,
+  aes(x = reorder(as.character(product_id), sales), y = sales)
+) +
+  geom_col(fill = "#FB5607") +
+  geom_text(
+    aes(label = scales::dollar(sales)),
+    hjust = -0.1,
+    size = 3.5
+  ) +
+  coord_flip() +
+  scale_y_continuous(
+    labels = scales::dollar,
+    expand = expansion(mult = c(0, 0.15))
+  ) +
+  labs(
+    title = "Top 10 热销产品销售额",
+    x = "Product_id",
+    y = "销售额（美元）"
+  ) +
+  theme_minimal()
+
+ggsave(
+  file.path(out_dir, "19_top10_products_by_sales.png"),
+  p_top10_products,
+  width = 12,
+  height = 7,
+  dpi = 300
+)

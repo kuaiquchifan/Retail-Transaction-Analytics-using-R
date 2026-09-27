@@ -75,7 +75,7 @@
 
 ![图片说明](output-final-data-visual\eda_stage2\15_order_status_distribution.png)
 
-### 2.4 Top5商品类别销量分布
+### 2.4 Top5商品类别销量和销售金额分布
 
 | root_category            | total_qty | total_sales | avg_price          | avg_discount       |
 | ------------------------ | --------- | ----------- | ------------------ | ------------------ |
@@ -87,23 +87,33 @@
 
 ![图片说明](output-final-data-visual\eda_stage0\03_top5_category_sales.png)
 
-### 2.5 Top20商品颜色的销量分布
+![图片说明](output-final-data-visual\eda_stage2\12a_root_category_sales_share_pie.png)
+
+![图片说明](output-final-data-visual\eda_stage2\12b_root_category_qty_share_pie.png)
+
+![图片说明](output-final-data-visual\eda_stage2\12c_top5_category_productid_share_pie.png)
+
+### 2.5 Top10 商品销售金额
+
+![图片说明](output-final-data-visual\eda_stage2\19_top10_products_by_sales.png)
+
+### 2.6 Top20商品颜色的销量分布
 
 ![图片说明](output-final-data-visual\eda_stage0\04_color_preference_top20.png)
 
-### 2.6 Top20商品尺码的销量分布
+### 2.7 Top20商品尺码的销量分布
 
 ![图片说明](output-final-data-visual\eda_stage0\05_size_distribution_top20.png)
 
-### 2.7 Top10商品品牌的销量分布
+### 2.8 Top10商品品牌的销量分布
 
 ![图片说明](output-final-data-visual\eda_stage0\06_brand_top10.png)
 
-### 2.8 不同销售渠道和地区的商品销售额对比
+### 2.9 不同销售渠道和地区的商品销售额对比
 
 ![图片说明](output-final-data-visual\eda_stage2\09_channel_region_sales.png)
 
-### 2.9 不同在售状态和商品类别的关系
+### 2.10 不同在售状态和商品类别的关系
 
 ![图片说明](output-final-data-visual\eda_stage2\12_in_stock_by_category.png)
 
@@ -144,6 +154,10 @@ recency 中等（约 380 天）
 ![图片说明](output-final-data-visual\eda_stage2\17_pca_customers_pc1_pc2.png)
 
 ![图片说明](output-final-data-visual\eda_stage2\02_cluster_count_bar.png)
+
+![图片说明](output-final-data-visual\eda_stage2\02_cluster_sales_share_pie.png)
+
+![图片说明](output-final-data-visual\eda_stage2\02_cluster_share_pie.png)
 
 ### 3.2 不同客户cluster的总消费金额（美元）和订单数的表现
 
